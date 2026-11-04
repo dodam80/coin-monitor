@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>코인 지표 대시보드</title>
+<style>
+  body { font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; background: #f5f6f8; color: #1d2330; margin: 0; padding: 24px 16px; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .muted { color: #6b7280; }
+  .sub { font-size: 14px; margin-bottom: 20px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 18px; }
+  .price { font-size: 26px; font-weight: 700; margin: 8px 0 12px; }
+  .row { display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-top: 1px solid #e5e7eb; font-size: 14px; }
+  .good { color: #15803d; }
+  .warn { color: #b45309; }
+  .neutral { color: #475569; }
+  .foot { font-size: 12px; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>코인 지표 대시보드</h1>
+  <div class="sub muted" id="updated">불러오는 중...</div>
+  <div class="grid" id="cards"></div>
+  <p class="muted foot">※ 참고용 정보이며 매수·매도를 권유하지 않습니다. 이동평균은 1시간봉 기준입니다.</p>
+</div>
+<script>
+  const won = n => (n == null ? "-" : Math.round(n).toLocaleString("ko-KR") + "원");
+
+  fetch("data.json?t=" + Date.now())
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById("updated").textContent = "마지막 갱신: " + d.updated_at + " (2시간마다 자동 갱신)";
+      document.getElementById("cards").innerHTML = d.coins.map(c => {
+        if (c.error) {
+          return `<div class="card"><b>${c.market}</b><p class="warn">조회 실패: ${c.error}</p></div>`;
+        }
+        const name = c.market.replace("KRW-", "");
+        const cross = c.golden_state
+          ? '<span class="good">단기선이 장기선 위</span>'
+          : '<span class="warn">단기선이 장기선 아래</span>';
+        let rsi = "-";
+        if (c.rsi != null) {
+          if (c.rsi >= 70) rsi = `<span class="warn">${c.rsi} (과매수)</span>`;
+          else if (c.rsi <= 30) rsi = `<span class="good">${c.rsi} (과매도)</span>`;
+          else rsi = `${c.rsi} (중립)`;
+        }
+        const sig = c.signals.length
+          ? c.signals.map(s => `<div class="warn">[알림] ${s}</div>`).join("")
+          : '<span class="neutral">특이 신호 없음</span>';
+        return `<div class="card">
+          <div><b>${name}</b> <span class="muted">${c.market}</span></div>
+          <div class="price">${won(c.price)}</div>
+          <div class="row"><span class="muted">20시간선</span><span>${won(c.sma_short)}</span></div>
+          <div class="row"><span class="muted">60시간선</span><span>${won(c.sma_long)}</span></div>
+          <div class="row"><span class="muted">이동평균 상태</span>${cross}</div>
+          <div class="row"><span class="muted">RSI(14)</span><span>${rsi}</span></div>
+          <div class="row"><span class="muted">신호</span><span>${sig}</span></div>
+        </div>`;
+      }).join("");
+    })
+    .catch(e => {
+      document.getElementById("updated").textContent = "데이터를 아직 불러오지 못했습니다. 첫 실행 후 다시 확인해 주세요. (" + e + ")";
+    });
+</script>
+</body>
+</html>
