@@ -1,0 +1,32 @@
+name: coin-monitor
+
+on:
+  schedule:
+    - cron: "0 */2 * * *"   # 2시간마다 (UTC 기준, 한국 시간 기준 짝수 시)
+  workflow_dispatch:          # 수동 실행 버튼도 사용 가능
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install packages
+        run: pip install requests pandas matplotlib
+
+      - name: Calculate indicators
+        run: python ci_run.py
+
+      - name: Save result to repository
+        run: |
+          git config user.name "coin-bot"
+          git config user.email "coin-bot@users.noreply.github.com"
+          git add docs/data.json
+          git diff --cached --quiet || (git commit -m "update coin data" && git push)
