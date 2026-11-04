@@ -2,7 +2,7 @@ name: coin-monitor
 
 on:
   schedule:
-    - cron: "0 */2 * * *"   # 2시간마다 (UTC 기준, 한국 시간 기준 짝수 시)
+    - cron: "*/15 * * * *"   # 2시간마다 (UTC 기준, 한국 시간 기준 짝수 시)
   workflow_dispatch:          # 수동 실행 버튼도 사용 가능
 
 permissions:
