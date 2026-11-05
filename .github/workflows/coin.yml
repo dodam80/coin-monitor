@@ -1,12 +1,22 @@
-name: coin-monitor
+name: coin-bot
 
 on:
   schedule:
-    - cron: "*/15 * * * *"   # 15분마다 (UTC 기준, 한국 시간 기준 짝수 시)
-  workflow_dispatch:          # 수동 실행 버튼도 사용 가능
+    - cron: "*/5 * * * *"     # 5분마다: 급등·급락 체크
+    - cron: "*/15 * * * *"    # 15분마다: 매수·매도 참고 신호 체크
+  workflow_dispatch:          # 수동 실행 (텔레그램 테스트 가능)
+    inputs:
+      test_alert:
+        description: "텔레그램 연결 테스트 메시지 보내기"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
+
+concurrency:
+  group: coin-bot             # 두 주기 작업이 겹쳐도 순서대로 실행
+  cancel-in-progress: false
 
 jobs:
   run:
@@ -21,12 +31,31 @@ jobs:
       - name: Install packages
         run: pip install requests pandas matplotlib
 
-      - name: Calculate indicators
-        run: python ci_run.py
+      - name: Run
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          EVENT: ${{ github.event.schedule }}
+          TEST_ALERT: ${{ github.event.inputs.test_alert }}
+        run: |
+          if [ "$TEST_ALERT" = "true" ]; then
+            python coin_bot.py --test-alert
+            exit 0
+          fi
+          if [ -z "$EVENT" ] || [ "$EVENT" = "*/15 * * * *" ]; then
+            python coin_bot.py --mode signal
+          fi
+          if [ -z "$EVENT" ] || [ "$EVENT" = "*/5 * * * *" ]; then
+            python coin_bot.py --mode spike
+          fi
 
-      - name: Save result to repository
+      - name: Save results
         run: |
           git config user.name "coin-bot"
           git config user.email "coin-bot@users.noreply.github.com"
-          git add docs/data.json
-          git diff --cached --quiet || (git commit -m "update coin data" && git push)
+          git add docs
+          if ! git diff --cached --quiet; then
+            git commit -m "update coin results"
+            git pull --rebase origin "$GITHUB_REF_NAME"
+            git push
+          fi
