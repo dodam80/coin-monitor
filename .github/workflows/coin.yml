@@ -2,8 +2,7 @@ name: coin-bot
 
 on:
   schedule:
-    - cron: "*/5 * * * *"     # 5분마다: 급등·급락 체크
-    - cron: "*/15 * * * *"    # 15분마다: 매수·매도 참고 신호 체크
+    - cron: "*/15 * * * *"    # 15분마다: 매수·매도 참고 신호 + 대시보드 갱신
   workflow_dispatch:          # 수동 실행 (텔레그램 테스트 가능)
     inputs:
       test_alert:
@@ -15,7 +14,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: coin-bot             # 두 주기 작업이 겹쳐도 순서대로 실행
+  group: coin-bot
   cancel-in-progress: false
 
 jobs:
@@ -35,19 +34,13 @@ jobs:
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          EVENT: ${{ github.event.schedule }}
           TEST_ALERT: ${{ github.event.inputs.test_alert }}
         run: |
           if [ "$TEST_ALERT" = "true" ]; then
             python coin_bot.py --test-alert
             exit 0
           fi
-          if [ -z "$EVENT" ] || [ "$EVENT" = "*/15 * * * *" ]; then
-            python coin_bot.py --mode signal
-          fi
-          if [ -z "$EVENT" ] || [ "$EVENT" = "*/5 * * * *" ]; then
-            python coin_bot.py --mode spike
-          fi
+          python coin_bot.py --mode signal
 
       - name: Save results
         run: |
