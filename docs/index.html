@@ -2,69 +2,193 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>코인 지표 대시보드</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>코인 신호 대시보드</title>
 <style>
-  body { font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; background: #f5f6f8; color: #1d2330; margin: 0; padding: 24px 16px; }
-  .wrap { max-width: 900px; margin: 0 auto; }
-  h1 { font-size: 22px; margin: 0 0 4px; }
-  .muted { color: #6b7280; }
-  .sub { font-size: 14px; margin-bottom: 20px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-  .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 18px; }
-  .price { font-size: 26px; font-weight: 700; margin: 8px 0 12px; }
-  .row { display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-top: 1px solid #e5e7eb; font-size: 14px; }
-  .good { color: #15803d; }
-  .warn { color: #b45309; }
-  .neutral { color: #475569; }
-  .foot { font-size: 12px; margin-top: 16px; }
+:root{
+  --bg:#f3f5fa; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0; --soft:#f8fafc;
+  --up:#dc2626; --down:#2563eb;
+  --buy:#059669; --sell:#e11d48; --hold:#64748b; --warn:#d97706;
+  --shadow:0 1px 2px rgba(15,23,42,.05),0 10px 30px rgba(15,23,42,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0a0f1d; --card:#131a2c; --text:#e6edf9; --muted:#8b98b0; --line:#223050; --soft:#0f1627;
+    --up:#f87171; --down:#60a5fa; --buy:#34d399; --sell:#fb7185; --hold:#94a3b8; --warn:#fbbf24;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;line-height:1.5}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 16px 48px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:22px}
+h1{font-size:24px;margin:0;letter-spacing:-.02em}
+.meta{color:var(--muted);font-size:13px;margin-top:6px}
+button{font:inherit;font-size:13px;font-weight:700;color:var(--text);background:var(--card);
+  border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;box-shadow:var(--shadow)}
+button:active{transform:translateY(1px)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.name{font-size:15px;font-weight:800}
+.sym{color:var(--muted);font-size:12px;margin-left:6px;font-weight:500}
+.badge{padding:6px 12px;border-radius:999px;font-size:13px;font-weight:800;color:#fff;white-space:nowrap}
+.b-buy{background:var(--buy)} .b-sell{background:var(--sell)} .b-hold{background:var(--hold)}
+.price{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:14px 0 8px;font-variant-numeric:tabular-nums}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px;
+  background:var(--soft);border:1px solid var(--line)}
+.up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--muted)}
+.gauge-head{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:18px}
+.gauge{position:relative;height:10px;border-radius:999px;margin-top:8px;
+  background:linear-gradient(90deg,var(--buy) 0 30%,var(--line) 30% 70%,var(--sell) 70% 100%);opacity:.85}
+.dot{position:absolute;top:50%;width:16px;height:16px;transform:translate(-50%,-50%);border-radius:50%;
+  background:var(--card);border:3px solid var(--text)}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.kv div{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.kv span{display:block;color:var(--muted);font-size:12px}
+.kv b{font-size:14px;font-variant-numeric:tabular-nums}
+.reasons{margin:14px 0 0;padding:0;list-style:none;font-size:13px;color:var(--muted)}
+.reasons li{padding:3px 0}
+.reasons li::before{content:"· ";color:var(--warn);font-weight:900}
+.chart{width:100%;border-radius:14px;margin-top:16px;border:1px solid var(--line);background:#fff;display:block}
+section{margin-top:28px}
+h2{font-size:16px;margin:0 0 12px;letter-spacing:-.01em}
+.hist{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
+.hrow{display:grid;grid-template-columns:92px 56px 52px 1fr;gap:10px;align-items:center;padding:12px 16px;font-size:13px;border-top:1px solid var(--line)}
+.hrow:first-child{border-top:none}
+.hrow .msg{color:var(--text);word-break:keep-all}
+.tag{font-weight:800;font-size:12px;padding:3px 8px;border-radius:8px;text-align:center}
+.t-신호{background:rgba(217,119,6,.14);color:var(--warn)}
+.t-급등{background:rgba(220,38,38,.12);color:var(--up)}
+.t-급락{background:rgba(37,99,235,.12);color:var(--down)}
+.t-empty{color:var(--muted);padding:18px 16px;font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--muted);margin-top:12px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+footer{margin-top:30px;font-size:12px;color:var(--muted);line-height:1.7}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:20px;padding:26px;color:var(--muted);text-align:center}
+@media (max-width:480px){
+  .price{font-size:26px}
+  .hrow{grid-template-columns:78px 50px 1fr;}
+  .hrow .coin{display:none}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>코인 지표 대시보드</h1>
-  <div class="sub muted" id="updated">불러오는 중...</div>
-  <div class="grid" id="cards"></div>
-  <p class="muted foot">※ 참고용 정보이며 매수·매도를 권유하지 않습니다. 이동평균은 1시간봉 기준입니다.</p>
-</div>
-<script>
-  const won = n => (n == null ? "-" : Math.round(n).toLocaleString("ko-KR") + "원");
+  <header>
+    <div>
+      <h1>코인 신호 대시보드</h1>
+      <div class="meta" id="updated">불러오는 중...</div>
+    </div>
+    <button id="reload" type="button">↻ 새로고침</button>
+  </header>
 
-  fetch("data.json?t=" + Date.now())
-    .then(r => r.json())
-    .then(d => {
-      document.getElementById("updated").textContent = "마지막 갱신: " + d.updated_at + " (2시간마다 자동 갱신)";
-      document.getElementById("cards").innerHTML = d.coins.map(c => {
-        if (c.error) {
-          return `<div class="card"><b>${c.market}</b><p class="warn">조회 실패: ${c.error}</p></div>`;
-        }
-        const name = c.market.replace("KRW-", "");
-        const cross = c.golden_state
-          ? '<span class="good">단기선이 장기선 위</span>'
-          : '<span class="warn">단기선이 장기선 아래</span>';
-        let rsi = "-";
-        if (c.rsi != null) {
-          if (c.rsi >= 70) rsi = `<span class="warn">${c.rsi} (과매수)</span>`;
-          else if (c.rsi <= 30) rsi = `<span class="good">${c.rsi} (과매도)</span>`;
-          else rsi = `${c.rsi} (중립)`;
-        }
-        const sig = c.signals.length
-          ? c.signals.map(s => `<div class="warn">[알림] ${s}</div>`).join("")
-          : '<span class="neutral">특이 신호 없음</span>';
-        return `<div class="card">
-          <div><b>${name}</b> <span class="muted">${c.market}</span></div>
-          <div class="price">${won(c.price)}</div>
-          <div class="row"><span class="muted">20시간선</span><span>${won(c.sma_short)}</span></div>
-          <div class="row"><span class="muted">60시간선</span><span>${won(c.sma_long)}</span></div>
-          <div class="row"><span class="muted">이동평균 상태</span>${cross}</div>
-          <div class="row"><span class="muted">RSI(14)</span><span>${rsi}</span></div>
-          <div class="row"><span class="muted">신호</span><span>${sig}</span></div>
-        </div>`;
-      }).join("");
-    })
-    .catch(e => {
-      document.getElementById("updated").textContent = "데이터를 아직 불러오지 못했습니다. 첫 실행 후 다시 확인해 주세요. (" + e + ")";
-    });
+  <div id="cards" class="grid"></div>
+
+  <section>
+    <h2>최근 알림</h2>
+    <div class="hist" id="hist"></div>
+  </section>
+
+  <div class="legend">
+    <span><i style="background:var(--buy)"></i>매수 참고</span>
+    <span><i style="background:var(--sell)"></i>매도 참고</span>
+    <span><i style="background:var(--hold)"></i>관망</span>
+    <span><i style="background:var(--up)"></i>상승 (빨강)</span>
+    <span><i style="background:var(--down)"></i>하락 (파랑)</span>
+  </div>
+
+  <footer>
+    ※ 신호는 이동평균과 RSI 규칙으로 계산한 <b>참고 정보</b>이며, 수익을 보장하지 않습니다. 매수·매도를 권유하지 않습니다.<br>
+    ※ 신호: 1시간봉 기준 · 15분마다 갱신 / 급등락: 최근 5분 변동 ±2% 기준 · 5분마다 확인 (GitHub 예약 실행은 몇 분 늦을 수 있습니다).
+  </footer>
+</div>
+
+<script>
+const won = n => (n == null ? "-" : Math.round(n).toLocaleString("ko-KR") + "원");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const badgeClass = l => l === "매수 참고" ? "b-buy" : l === "매도 참고" ? "b-sell" : "b-hold";
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+function changeHtml(ch){
+  if (ch == null) return '<span class="pill flat">5분 변동 -</span>';
+  const cls = ch > 0 ? "up" : ch < 0 ? "down" : "flat";
+  const arrow = ch > 0 ? "▲" : ch < 0 ? "▼" : "–";
+  return `<span class="pill ${cls}">${arrow} 5분 ${ch > 0 ? "+" : ""}${ch.toFixed(2)}%</span>`;
+}
+
+function card(c, sp){
+  if (c.error) return `<div class="card"><b>${esc(c.market)}</b><p class="down">조회 실패: ${esc(c.error)}</p></div>`;
+  const name = c.market.replace("KRW-", "");
+  const sig = c.signal || "관망";
+  const rsi = c.rsi;
+  const pos = rsi == null ? 50 : clamp(rsi, 0, 100);
+  const rsiTxt = rsi == null ? "-" : rsi.toFixed(1) + (rsi >= 70 ? " · 과매수" : rsi <= 30 ? " · 과매도" : " · 중립");
+  const reasons = (c.reasons || []).map(r => `<li>${esc(r)}</li>`).join("");
+  const ch = sp ? sp.change : null;
+  const livePrice = sp && sp.price ? sp.price : c.price;
+  return `
+  <div class="card">
+    <div class="top">
+      <div><span class="name">${esc(name)}</span><span class="sym">${esc(c.market)}</span></div>
+      <span class="badge ${badgeClass(sig)}">${esc(sig)}</span>
+    </div>
+    <div class="price">${won(livePrice)}</div>
+    ${changeHtml(ch)}
+
+    <div class="gauge-head"><span>RSI(14)</span><span><b>${rsiTxt}</b></span></div>
+    <div class="gauge"><div class="dot" style="left:${pos}%"></div></div>
+
+    <div class="kv">
+      <div><span>20시간선</span><b>${won(c.sma_short)}</b></div>
+      <div><span>60시간선</span><b>${won(c.sma_long)}</b></div>
+    </div>
+    <div class="kv" style="grid-template-columns:1fr">
+      <div><span>이동평균 상태</span><b>${c.golden_state ? "단기선이 장기선 위" : "단기선이 장기선 아래"}</b></div>
+    </div>
+
+    ${reasons ? `<ul class="reasons">${reasons}</ul>` : ""}
+
+    <img class="chart" src="chart_${esc(c.market)}.png?t=${Date.now()}" alt="${esc(name)} 차트" loading="lazy">
+  </div>`;
+}
+
+function historyHtml(list){
+  if (!list || !list.length) return '<div class="t-empty">아직 알림이 없습니다.</div>';
+  return list.map(h => {
+    const kind = h.kind || "";
+    return `<div class="hrow">
+      <span>${esc(h.time)}</span>
+      <span class="tag t-${esc(kind)}">${esc(kind)}</span>
+      <span class="coin">${esc(h.coin)}</span>
+      <span class="msg">${esc(h.message)}</span>
+    </div>`;
+  }).join("");
+}
+
+async function load(){
+  const t = Date.now();
+  const get = (f, fb) => fetch(`${f}?t=${t}`).then(r => r.ok ? r.json() : fb).catch(() => fb);
+  const [d, s, h] = await Promise.all([get("data.json", null), get("spike.json", null), get("alerts.json", [])]);
+
+  const up = document.getElementById("updated");
+  const parts = [];
+  if (d) parts.push(`신호 갱신 ${esc(d.updated_at)}`);
+  if (s) parts.push(`급등락 확인 ${esc(s.updated_at)}`);
+  up.textContent = parts.length ? parts.join(" · ") : "아직 데이터가 없습니다. Actions에서 Run workflow를 눌러 주세요.";
+
+  const cards = document.getElementById("cards");
+  if (!d || !d.coins || !d.coins.length){
+    cards.innerHTML = `<div class="empty">아직 데이터가 없습니다.</div>`;
+  } else {
+    cards.innerHTML = d.coins.map(c => card(c, (s && s.coins || []).find(x => x.market === c.market))).join("");
+  }
+  document.getElementById("hist").innerHTML = historyHtml(h);
+}
+
+document.getElementById("reload").addEventListener("click", load);
+load();
 </script>
 </body>
 </html>
