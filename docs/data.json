@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-11-09 03:17 KST",
+  "updated_at": "2026-11-09 04:17 KST",
   "coins": [
     {
       "market": "KRW-BTC",
-      "error": "HTTPSConnectionPool(host='api.upbit.com', port=443): Max retries exceeded with url: /v1/candles/minutes/60?market=KRW-BTC&count=200 (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.upbit.com', port=443) at 0x7fe9b50a3d40>, 'Connection to api.upbit.com timed out. (connect timeout=10)'))"
+      "error": "HTTPSConnectionPool(host='api.upbit.com', port=443): Max retries exceeded with url: /v1/candles/minutes/60?market=KRW-BTC&count=200 (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.upbit.com', port=443) at 0x7f544e7c1f70>, 'Connection to api.upbit.com timed out. (connect timeout=10)'))"
     },
     {
       "market": "KRW-ETH",
-      "error": "HTTPSConnectionPool(host='api.upbit.com', port=443): Max retries exceeded with url: /v1/candles/minutes/60?market=KRW-ETH&count=200 (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.upbit.com', port=443) at 0x7fe9b4a6f8f0>, 'Connection to api.upbit.com timed out. (connect timeout=10)'))"
+      "error": "HTTPSConnectionPool(host='api.upbit.com', port=443): Max retries exceeded with url: /v1/candles/minutes/60?market=KRW-ETH&count=200 (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.upbit.com', port=443) at 0x7f544cd97e60>, 'Connection to api.upbit.com timed out. (connect timeout=10)'))"
     }
   ]
 }
