@@ -1,24 +1,24 @@
 {
-  "updated_at": "2026-11-14 11:39 KST",
+  "updated_at": "2026-11-14 18:29 KST",
   "coins": [
     {
       "market": "KRW-BTC",
-      "price": 92394000.0,
-      "sma_short": 93642000.0,
-      "sma_long": 96638667.0,
-      "rsi": 30.1,
+      "price": 91779000.0,
+      "sma_short": 92893150.0,
+      "sma_long": 95595683.0,
+      "rsi": 25.4,
       "golden_state": false,
-      "signal": "관망",
+      "signal": "매수 참고",
       "reasons": [
-        "뚜렷한 신호 없음"
+        "RSI 25.4 과매도 구간에서 반등"
       ]
     },
     {
       "market": "KRW-ETH",
-      "price": 2605000.0,
-      "sma_short": 2640550.0,
-      "sma_long": 2710667.0,
-      "rsi": 33.9,
+      "price": 2603000.0,
+      "sma_short": 2622750.0,
+      "sma_long": 2685067.0,
+      "rsi": 32.9,
       "golden_state": false,
       "signal": "관망",
       "reasons": [
