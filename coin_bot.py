@@ -21,7 +21,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 # ===================== 설정 =====================
-MARKETS = ["KRW-BTC", "KRW-ETH"]
+MARKETS = ["KRW-BTC", "KRW-ETH", "KRW-XRP"]
 UPBIT_URL = "https://api.upbit.com/v1/candles/minutes/{unit}"
 
 SIGNAL_UNIT = 60            # 신호 계산 봉 단위(분). 60 = 1시간봉

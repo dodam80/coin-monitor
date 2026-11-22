@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 
 
 # ===================== 설정 =====================
-MARKETS = ["KRW-BTC", "KRW-ETH"]   # 감시할 코인 (업비트 마켓 코드)
+MARKETS = ["KRW-BTC", "KRW-ETH", "KRW-XRP"]   # 감시할 코인 (업비트 마켓 코드)
 CANDLE_UNIT = 60                   # 분봉 단위 (60 = 1시간봉)
 CANDLE_COUNT = 200                 # 가져올 캔들 개수 (최소 60 이상)
 CHECK_INTERVAL_SEC = 300           # 갱신 주기 (초) - 300 = 5분
