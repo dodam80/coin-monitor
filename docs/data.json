@@ -1,40 +1,40 @@
 {
-  "updated_at": "2026-11-24 04:26 KST",
+  "updated_at": "2026-11-24 13:24 KST",
   "coins": [
     {
       "market": "KRW-BTC",
-      "price": 83905000.0,
-      "sma_short": 84091300.0,
-      "sma_long": 82874133.0,
-      "rsi": 48.3,
+      "price": 82452000.0,
+      "sma_short": 83872900.0,
+      "sma_long": 83168717.0,
+      "rsi": 19.4,
       "golden_state": true,
-      "signal": "관망",
+      "signal": "매수 참고",
       "reasons": [
-        "뚜렷한 신호 없음"
+        "RSI 19.4 과매도 구간에서 반등"
       ]
     },
     {
       "market": "KRW-ETH",
-      "price": 2372000.0,
-      "sma_short": 2368250.0,
-      "sma_long": 2330867.0,
-      "rsi": 52.0,
+      "price": 2316000.0,
+      "sma_short": 2358900.0,
+      "sma_long": 2337100.0,
+      "rsi": 12.8,
       "golden_state": true,
-      "signal": "관망",
+      "signal": "매수 참고",
       "reasons": [
-        "뚜렷한 신호 없음"
+        "RSI 12.8 과매도 구간에서 반등"
       ]
     },
     {
       "market": "KRW-XRP",
-      "price": 1293.0,
-      "sma_short": 1291.0,
-      "sma_long": 1273.0,
-      "rsi": 53.1,
+      "price": 1297.0,
+      "sma_short": 1298.0,
+      "sma_long": 1279.0,
+      "rsi": 29.2,
       "golden_state": true,
-      "signal": "관망",
+      "signal": "매수 참고",
       "reasons": [
-        "뚜렷한 신호 없음"
+        "RSI 29.2 과매도 구간에서 반등"
       ]
     }
   ]
